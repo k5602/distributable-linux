@@ -388,7 +388,13 @@ or IAT (Import Address Table) entries in PE format used on Windows.")
               (let ((source-file (string-append (assoc-ref outputs "out") "/lib/libmetacalld.so"))
                     (symlink-target (string-append (assoc-ref outputs "out") "/lib/libmetacall.so")))
                 (when (file-exists? source-file)
-                  (symlink source-file symlink-target))))))
+                  (symlink source-file symlink-target)))))
+          (add-after 'install 'symlink-metacall-header
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((header (string-append (assoc-ref outputs "out") "/include/metacall/metacall.h"))
+                    (link   (string-append (assoc-ref outputs "out") "/include/metacall.h")))
+                (when (file-exists? header)
+                  (symlink "metacall/metacall.h" link))))))
 
         ; TODO: Enable tests
         #:tests? #f
